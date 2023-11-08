@@ -32,8 +32,9 @@ jobs:
         new_version=$(semver bump patch $current_version)
         echo $new_version > version.txt
         echo "::set-output name=new_version::$new_version"
-        
-    - name: Commit version change
+        echo "{name}={new_version}" >> $GITHUB_OUTPUT        
+    - name: Commit version changes
+      id: commit-version
       run: |
         git add version.txt
         git commit -m "Bump version to $new_version"
