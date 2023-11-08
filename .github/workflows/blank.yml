@@ -34,7 +34,6 @@ jobs:
         echo $new_version > version.txt
         echo "::set-output name=new_version::$new_version"
         echo "{name}=${{steps.determine1.outputs.new_version}}" >> $GITHUB_OUTPUT
-        
     - name: Commit version changes
       id: commit-version
       run: |
@@ -43,7 +42,6 @@ jobs:
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
     - name: Create a release
       id: create_release
       uses: softprops/action-gh-release@v1
@@ -51,7 +49,6 @@ jobs:
         files: |
           db/script.txt
         token: ${{ secrets.GH_TOKEN }}
-
     - name: Get the release ID
       run: |
         release_id="${{ steps.create_release.outputs.id }}"
