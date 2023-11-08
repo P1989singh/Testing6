@@ -19,8 +19,7 @@ jobs:
         git config user.name "P1989singh"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Determine the next version
+    - name: Determine version
       run: | 
         if [ -f ./.version.txt ]; then 
           current_version=$(cat ./.version.txt)
