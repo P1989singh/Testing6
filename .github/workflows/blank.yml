@@ -29,17 +29,17 @@ jobs:
             current_version="1.0.0"  # Set an initial version
             echo $current_version > ./.version.txt
         fi
-        echo "Current Version: ${{steps.determine1.outputs.current_version}}"
-        new_version=$(semver bump patch ${{steps.determine1.outputs.current_version}})
+        echo "Current Version: ${{steps.determine1.outputs.version}}"
+        new_version=$(semver bump patch ${{steps.determine1.outputs.version}})
         echo $new_version > version.txt
         echo "::set-output name=new_version::$new_version"
-        echo "{name}=${{steps.determine1.outputs.current_version}}" >> $GITHUB_OUTPUT
+        echo "{name}=${{steps.determine1.outputs.new_version}}" >> $GITHUB_OUTPUT
         
     - name: Commit version changes
       id: commit-version
       run: |
         git add version.txt
-        git commit -m "Bump version to ${{steps.determine1.outputs.current_version}}"
+        git commit -m "Bump version to ${{steps.determine1.outputs.new_version}}"
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -51,7 +51,6 @@ jobs:
         files: |
           db/script.txt
         token: ${{ secrets.GH_TOKEN }}
-        tag:
 
     - name: Get the release ID
       run: |
