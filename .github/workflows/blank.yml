@@ -32,8 +32,10 @@ jobs:
         new_version=$(semver bump patch $current_version)
         echo $new_version > version.txt
         echo "::set-output name=new_version::$new_version"
+        echo "{name}={new_version}" >> $GITHUB_OUTPUT
         
     - name: Commit version changes
+      id: commit-version
       run: |
         git add version.txt
         git commit -m "Bump version to $new_version"
@@ -48,6 +50,7 @@ jobs:
         files: |
           db/script.txt
         token: ${{ secrets.GH_TOKEN }}
+        tag:
 
     - name: Get the release ID
       run: |
@@ -65,4 +68,4 @@ jobs:
         curl -sSL -X POST -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
         -H "Content-Type: application/zip" \
         --data-binary @"$GITHUB_WORKSPACE/db/script.txt" \
-        "https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${{ steps.create_release.outputs.id }}/assets?name=script.sql"
+        "https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${{ steps.create_release.outputs.id }}/assets?name=script.txt"
