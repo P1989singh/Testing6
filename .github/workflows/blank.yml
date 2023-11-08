@@ -39,16 +39,14 @@ jobs:
         git commit -m "Bump version to $new_version"
         git push
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     - name: Create a release
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
         files: |
           db/script.txt
-        token: ${{ secrets.GITHUB_TOKEN }}
-
+        token: ${{ secrets.GH_TOKEN }}
     - name: Get the release ID
       run: |
         release_id="${{ steps.create_release.outputs.id }}"
@@ -62,7 +60,7 @@ jobs:
 
     - name: Attach script.txt to the release
       run: |
-        curl -sSL -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+        curl -sSL -X POST -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
         -H "Content-Type: application/zip" \
         --data-binary @"$GITHUB_WORKSPACE/db/script.txt" \
-        "https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${{ steps.create_release.outputs.id }}/assets?name=script.sql"
+        "https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${{ steps.create_release.outputs.id }}/assets?name=script.txt"
