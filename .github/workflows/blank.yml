@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v2 
     - name: Set up Git
       run: |
         git config user.email "prmkmrsingh@yahoo.in"
@@ -28,8 +28,7 @@ jobs:
         fi
         echo "Current Version: $current_version"
       shell: bash
-    #    current_version=$(cat "./.version.txt")
-      new_version=$(semver bump patch $current_version)
+        new_version=$(semver bump patch $current_version)
         echo $new_version > version.txt
         echo "::set-output name=new_version::$new_version"
         
