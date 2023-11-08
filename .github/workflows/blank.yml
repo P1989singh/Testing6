@@ -21,6 +21,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Determine version
+      id: determine1
       run: | 
         if [ -f ./.version.txt ]; then 
           current_version=$(cat ./.version.txt)
@@ -28,17 +29,17 @@ jobs:
             current_version="1.0.0"  # Set an initial version
             echo $current_version > ./.version.txt
         fi
-        echo "Current Version: $current_version"
-        new_version=$(semver bump patch $current_version)
+        echo "Current Version: ${{steps.determine1.outputs.current_version}}"
+        new_version=$(semver bump patch ${{steps.determine1.outputs.current_version}})
         echo $new_version > version.txt
         echo "::set-output name=new_version::$new_version"
-        echo "{name}={new_version}" >> $GITHUB_OUTPUT
+        echo "{name}=${{steps.determine1.outputs.current_version}}" >> $GITHUB_OUTPUT
         
     - name: Commit version changes
       id: commit-version
       run: |
         git add version.txt
-        git commit -m "Bump version to $new_version"
+        git commit -m "Bump version to ${{steps.determine1.outputs.current_version}}"
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
