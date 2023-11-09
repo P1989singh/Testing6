@@ -23,17 +23,11 @@ jobs:
     - name: Determine version
       id: determine1
       run: | 
-        if [ -f ./.version.txt ]; then 
-          current_version=$(cat ./.version.txt)
-        else
-            current_version="1.0.0"  # Set an initial version
-            echo $current_version > ./.version.txt
-        fi
-        echo "Current Version: ${{steps.determine1.outputs.version}}"
-        new_version=$(semver bump patch ${{steps.determine1.outputs.version}})
+        current_version=$(cat version.txt)
+        new_version=$(semver bump patch $current_version)
+        echo "New version: $new_version"
         echo $new_version > version.txt
         echo "::set-output name=new_version::$new_version"
-        echo "{name}=${{steps.determine1.outputs.new_version}}" >> $GITHUB_OUTPUT
         
     - name: Commit version changes
       id: commit-version
@@ -49,7 +43,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          db/script.txt
+          DB/script.txt
         token: ${{ secrets.GH_TOKEN }}
 
     - name: Get the release ID
@@ -61,11 +55,11 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: script
-        path: db/script.txt
+        path: DB/script.txt
 
     - name: Attach script.txt to the release
       run: |
         curl -sSL -X POST -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
         -H "Content-Type: application/zip" \
-        --data-binary @"$GITHUB_WORKSPACE/db/script.txt" \
+        --data-binary @"$GITHUB_WORKSPACE/DB/script.txt" \
         "https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/${{ steps.create_release.outputs.id }}/assets?name=script.txt"
