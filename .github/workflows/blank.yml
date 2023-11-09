@@ -28,7 +28,6 @@ jobs:
         echo "New version: $new_version"
         echo $new_version > version.txt
         echo "::set-output name=new_version::$new_version"
-        
     - name: Commit version changes
       id: commit-version
       run: |
@@ -37,7 +36,6 @@ jobs:
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
     - name: Create a release
       id: create_release
       uses: softprops/action-gh-release@v1
@@ -45,7 +43,6 @@ jobs:
         files: |
           DB/script.txt
         token: ${{ secrets.GH_TOKEN }}
-
     - name: Get the release ID
       run: |
         release_id="${{ steps.create_release.outputs.id }}"
@@ -56,7 +53,6 @@ jobs:
       with:
         name: script
         path: DB/script.txt
-
     - name: Attach script.txt to the release
       run: |
         curl -sSL -X POST -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
